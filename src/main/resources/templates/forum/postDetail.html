@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Blog post</title>
+<style>
+h1 {
+    font-size: 24px;
+    color: #333;
+}
+
+/* Style for the <p> elements */
+p {
+    font-size: 16px;
+    color: #666;
+}
+
+/* Style for the <button> elements */
+button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Add more styles as needed */
+
+/* Example style for a class */
+.prev-comments {
+    margin-top: 20px;
+}
+
+/* Example style for an ID */
+#special-heading {
+    font-weight: bold;
+    font-size: 28px;
+    color: #ff9900;
+}
+/* Style for the post-Text box */
+.post-box {
+    border: 1px solid #ccc; /* Border color and thickness */
+    padding: 20px; /* Add padding to create space inside the box */
+    margin: 10px; /* Add margin to create space around the box */
+    background-color: #f9f9f9; /* Background color of the box */
+}
+
+
+</style>
+</head>
+<body th:object="${post}">
+	<h1> Hey <span th:text="${userName}"></span></h1>
+	<div class="post-box">
+		<h1>Post by <span th:text="*{author.name}">John Doe</span></h1>
+		<p th:text="*{content}">This is a post.</p>
+		<p>(At: <span th:text="*{#dates.format(createdAt, 'dd-MM-yyyy HH:mm')}"></span>)</p>
+		<p>Likes: <span th:text="${likeCount}">0</span></p>
+		<form method="post" action="#" th:action="@{/forum/post/{id}/like(id = ${post.id})}">
+			<input type="hidden" th:name="likerName" th:value="${likerName}">
+			<!-- <input type="submit" value="Like!"> -->
+			<button class="emoji-button">&#x1F44D; Like</button>
+		</form>
+	</div>
+	<div class="prev-comments">
+		<h3>Comments</h3>
+		<form th:action="@{'/forum/post/' + ${post.id} + '/comment'}" method="post">
+			<input type="text" name="comment" placeholder="Add a comment" />
+			<input type="hidden" th:name="commenterName" th:value="${commenterName}">
+			<button type="submit">Submit</button>
+		</form>
+		<ul>
+			<li th:each="comment : ${commentList}" th:if="${comment.post.id == post.id and comment.parent == null}">
+				<p th:text="${comment.commentText}"></p>
+				<p>Comment by: <span th:text="${comment.user.name}">(At: <span th:text="*{#dates.format(createdAt, 'dd-MM-yyyy HH:mm')}"></span>)</p> 
+				<form th:action="@{'/forum/post/' + ${post.id} + '/comment/' + ${comment.commentId} +'/reply'}" method="post">
+					<input type="text" name="Reply" placeholder="Reply to comment" />
+					<input type="hidden" th:name="commenterId" th:value="${comment.user.id}">
+					<button type="submit">Submit</button>
+				</form>
+				<div>
+					<h4>Reply</h4>
+					<ul style="margin-left: 20px;">
+						<li th:each="repl : ${replyList}" th:if="${repl.parent != null and repl.parent.commentId == comment.commentId}">
+							<p> <span th:text="${repl.commentText}"></span>, ( by: <span th:text="${repl.user.name}"></span> )</p>
+						</li>
+					</ul>
+				</div>
+			</li>
+		</ul>
+	</div>
+
+</body>
+</html>

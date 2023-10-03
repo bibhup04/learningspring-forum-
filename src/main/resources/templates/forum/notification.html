@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Notifications</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+    }
+
+    .notification-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 30px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .notification {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin: 10px;
+        width: 400px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .notification p {
+        margin: 0;
+        font-size: 18px;
+    }
+
+    button.notification-button {
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 92%;
+    }
+
+    button.notification-button:hover {
+        background-color: #2980b9;
+    }
+
+    .green-dot {
+        color: red;
+        margin-right: 10px;
+        float: right;
+        margin-top: 8px;
+    }
+
+</style>
+</head>
+<body>
+    <h1>Notifications</h1>
+
+    <div class="notification-container">
+        <div th:each="notification : ${notificationList}" class="notification">
+            <form method="post" action="#" th:action="@{'/forum/notification/' + ${notification.post.id}}">
+                <input type="hidden" name="notificationId" th:value="${notification.id}" />
+                <button type="submit" th:id="${notification.id}" class="notification-button"> 
+                    <span th:text="${notification.message}"></span>
+                </button>
+                <i th:class="${notification.view} ? '' : 'green-dot fas fa-circle'"></i>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
